@@ -121,7 +121,6 @@ class ResourcePool {
             newItem = this.available.pop();
         }
 
-
         if (newItem === null) {
             // no recycled item available, make a new one
             newItem = factory();
@@ -224,12 +223,12 @@ class Camera {
     y: number = 0;
 
     start() {
-        //frb.context.save();
-        //frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
+        frb.context.save();
+        frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
     }
 
     end() {
-        //frb.context.restore();
+        frb.context.restore();
     }
 }
 
@@ -245,7 +244,7 @@ class Mouse {
 }
 
 class Keyboard {
-    pressed: number = null;
+    pressed: bool[] = [];
     chars: { [index: string]: string; } = {
         8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt", 19: "PauseBreak",
         20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End", 36: "Home",
@@ -394,7 +393,6 @@ class Circle extends PositionedObject {
     update() {
         super.update();
         this.updateControlValues(this);
-        this.update();
         this.updatePositionResults(this);
 
         this.xTarget = this.x;
@@ -467,7 +465,6 @@ class Sprite extends PositionedObject {
     update() {
         super.update();
         this.updateControlValues(this);
-        this.update();
         this.updatePositionResults(this);
 
         this.xTarget = this.x;
@@ -491,8 +488,8 @@ class Graphics {
     fps: number;
 
     constructor(width: number, height: number) {
-        width = width;
-        height = height;
+        this.width = width;
+        this.height = height;
     }
 }
 

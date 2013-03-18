@@ -195,8 +195,11 @@ var Camera = (function () {
         this.y = 0;
     }
     Camera.prototype.start = function () {
+        frb.context.save();
+        frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
     };
     Camera.prototype.end = function () {
+        frb.context.restore();
     };
     return Camera;
 })();
@@ -215,7 +218,7 @@ var Mouse = (function () {
 })();
 var Keyboard = (function () {
     function Keyboard() {
-        this.pressed = null;
+        this.pressed = [];
         this.chars = {
             8: "Backspace",
             9: "Tab",
@@ -423,7 +426,6 @@ var Circle = (function (_super) {
     Circle.prototype.update = function () {
         _super.prototype.update.call(this);
         this.updateControlValues(this);
-        this.update();
         this.updatePositionResults(this);
         this.xTarget = this.x;
         this.yTarget = MathHelper.invert(this.y);
@@ -470,7 +472,6 @@ var Sprite = (function (_super) {
     Sprite.prototype.update = function () {
         _super.prototype.update.call(this);
         this.updateControlValues(this);
-        this.update();
         this.updatePositionResults(this);
         this.xTarget = this.x;
         this.yTarget = MathHelper.invert(this.y);
@@ -487,8 +488,8 @@ var Sprite = (function (_super) {
 })(PositionedObject);
 var Graphics = (function () {
     function Graphics(width, height) {
-        width = width;
-        height = height;
+        this.width = width;
+        this.height = height;
     }
     return Graphics;
 })();

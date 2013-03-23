@@ -136,86 +136,11 @@ class ResourcePool {
     }
 }
 
-class TimeManager {
-    start: Date = new Date();
-    last: Date = new Date();
-    secondDifference: number = 0;
-    secondDifferenceFromStart: number = 0;
-
-    update(): void {
-        var startMilli = this.start.getTime();
-        var lastMilli = this.last.getTime();
-        this.last = new Date();
-        var nowMilli = this.last.getTime();
-        var diff = nowMilli - lastMilli;
-        var startDiff = nowMilli - startMilli;
-        this.secondDifference = diff / 1000;
-        this.secondDifferenceFromStart = startDiff / 1000;
-    }
-}
-
-class PositionedObject {
-    x: number = 0;
-    y: number = 0;
-    xVelocity: number = 0;
-    yVelocity: number = 0;
-    xTarget: number = 0;
-    yTarget: number = 0;
-    xAcceleration: number = 0;
-    yAcceleration: number = 0;
-    zRotation: number = 0;
-    zRotationAcceleration: number = 0;
-    zRotationVelocity: number = 0;
-    listsBelongingTo: any[] = [];
-
-    update(): void {
-        var diff = frb.timeManager.secondDifference;
-
-        this.x += this.xVelocity * diff + this.xAcceleration * diff;
-        this.y += this.yVelocity * diff + this.yAcceleration * diff;
-        this.xVelocity += this.xAcceleration * diff;
-        this.yVelocity += this.yAcceleration * diff;
-
-        this.zRotation += this.zRotationVelocity * diff + this.zRotationAcceleration * diff;
-        this.zRotationVelocity += this.zRotationAcceleration * diff;
-    }
-
-    draw(): void {
-    }
-
-    initialize(target: PositionedObject): void {
-        this.updatePositionResults(target);
-        target.listsBelongingTo = this.listsBelongingTo;
-        target.removeSelfFromListsBelongingTo = this.removeSelfFromListsBelongingTo;
-    }
-
-    updatePositionResults(target: PositionedObject): void {
-        target.x = this.x;
-        target.y = this.y;
-        target.xVelocity = this.xVelocity;
-        target.yVelocity = this.yVelocity;
-        target.xAcceleration = this.xAcceleration;
-        target.yAcceleration = this.yAcceleration;
-        target.zRotation = this.zRotation;
-        target.zRotationAcceleration = this.zRotationAcceleration;
-        target.zRotationVelocity = this.zRotationVelocity;
-    }
-
-    updateControlValues(source: PositionedObject): void {
-        this.x = source.x;
-        this.y = source.y;
-        this.xVelocity = source.xVelocity;
-        this.yVelocity = source.yVelocity;
-        this.xAcceleration = source.xAcceleration;
-        this.yAcceleration = source.yAcceleration;
-        this.zRotation = source.zRotation;
-        this.zRotationVelocity = source.zRotationVelocity;
-        this.zRotationAcceleration = source.zRotationAcceleration;
-    }
-
-    removeSelfFromListsBelongingTo(): void {
-        frb.attachableList.removeFromAll(this);
-    }
+class TextureCoordinate {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
 }
 
 class Camera {
@@ -232,37 +157,25 @@ class Camera {
     }
 }
 
-class Mouse {
-    x: number = 0;
-    y: number = 0;
-    worldX: number = 0;
-    worldY: number = 0;
-    leftButton: bool = false;
-    rightButton: bool = false;
-    middleButton: bool = false;
-    onCanvas: bool = false;
-}
+/***********************
+    Managers
+***********************/
 
-class Keyboard {
-    pressed: bool[] = [];
-    chars: { [index: string]: string; } = {
-        8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt", 19: "PauseBreak",
-        20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End", 36: "Home",
-        37: "Left", 38: "Up", 39: "Right", 40: "Down", 45: "Insert", 46: "Delete", 48: "0", 49: "1",
-        50: "2", 51: "3", 52: "4", 53: "5", 54: "6", 55: "7", 56: "8", 57: "9", 65: "A", 66: "B",
-        67: "C", 68: "D", 69: "E", 70: "F", 71: "G", 72: "H", 73: "I", 74: "J", 75: "K", 76: "L",
-        77: "M", 78: "N", 79: "O", 80: "P", 81: "Q", 82: "R", 83: "S", 84: "T", 85: "U", 86: "V",
-        87: "W", 88: "X", 89: "Y", 90: "Z", 91: "Windows", 93: "RightClick", 96: "Num0", 97: "Num1",
-        98: "Num2", 99: "Num3", 100: "Num4", 101: "Num5", 102: "Num6", 103: "Num7", 104: "Num8",
-        105: "Num9", 106: "Num*", 107: "Num+", 109: "Num-", 110: "Num.", 111: "Num/", 112: "F1",
-        113: "F2", 114: "F3", 115: "F4", 116: "F5", 117: "F6", 118: "F7", 119: "F8", 120: "F9",
-        121: "F10", 122: "F11", 123: "F12", 144: "NumLock", 145: "ScrollLock", 182: "MyComputer",
-        183: "MyCalculator", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`",
-        219: "[", 220: "\\", 221: "]", 222: "'"
-    };
+class TimeManager {
+    start: Date = new Date();
+    last: Date = new Date();
+    secondDifference: number = 0;
+    secondDifferenceFromStart: number = 0;
 
-    keyDown(key: string): bool {
-        return this.pressed[frb.keys[key]] === true;
+    update(): void {
+        var startMilli = this.start.getTime();
+        var lastMilli = this.last.getTime();
+        this.last = new Date();
+        var nowMilli = this.last.getTime();
+        var diff = nowMilli - lastMilli;
+        var startDiff = nowMilli - startMilli;
+        this.secondDifference = diff / 1000;
+        this.secondDifferenceFromStart = startDiff / 1000;
     }
 }
 
@@ -342,6 +255,113 @@ class InputManager {
     }
 }
 
+/****************************
+  Input
+*****************************/
+
+class Mouse {
+    x: number = 0;
+    y: number = 0;
+    worldX: number = 0;
+    worldY: number = 0;
+    leftButton: bool = false;
+    rightButton: bool = false;
+    middleButton: bool = false;
+    onCanvas: bool = false;
+}
+
+class Keyboard {
+    pressed: bool[] = [];
+    chars: { [index: string]: string; } = {
+        8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt", 19: "PauseBreak",
+        20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End", 36: "Home",
+        37: "Left", 38: "Up", 39: "Right", 40: "Down", 45: "Insert", 46: "Delete", 48: "0", 49: "1",
+        50: "2", 51: "3", 52: "4", 53: "5", 54: "6", 55: "7", 56: "8", 57: "9", 65: "A", 66: "B",
+        67: "C", 68: "D", 69: "E", 70: "F", 71: "G", 72: "H", 73: "I", 74: "J", 75: "K", 76: "L",
+        77: "M", 78: "N", 79: "O", 80: "P", 81: "Q", 82: "R", 83: "S", 84: "T", 85: "U", 86: "V",
+        87: "W", 88: "X", 89: "Y", 90: "Z", 91: "Windows", 93: "RightClick", 96: "Num0", 97: "Num1",
+        98: "Num2", 99: "Num3", 100: "Num4", 101: "Num5", 102: "Num6", 103: "Num7", 104: "Num8",
+        105: "Num9", 106: "Num*", 107: "Num+", 109: "Num-", 110: "Num.", 111: "Num/", 112: "F1",
+        113: "F2", 114: "F3", 115: "F4", 116: "F5", 117: "F6", 118: "F7", 119: "F8", 120: "F9",
+        121: "F10", 122: "F11", 123: "F12", 144: "NumLock", 145: "ScrollLock", 182: "MyComputer",
+        183: "MyCalculator", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`",
+        219: "[", 220: "\\", 221: "]", 222: "'"
+    };
+
+    keyDown(key: string): bool {
+        return this.pressed[frb.keys[key]] === true;
+    }
+}
+
+/****************************
+  Objects
+*****************************/
+
+class PositionedObject {
+    x: number = 0;
+    y: number = 0;
+    xVelocity: number = 0;
+    yVelocity: number = 0;
+    xTarget: number = 0;
+    yTarget: number = 0;
+    xAcceleration: number = 0;
+    yAcceleration: number = 0;
+    zRotation: number = 0;
+    zRotationAcceleration: number = 0;
+    zRotationVelocity: number = 0;
+    listsBelongingTo: any[] = [];
+
+    update(): void {
+        var diff = frb.timeManager.secondDifference;
+
+        this.x += this.xVelocity * diff + this.xAcceleration * diff;
+        this.y += this.yVelocity * diff + this.yAcceleration * diff;
+        this.xVelocity += this.xAcceleration * diff;
+        this.yVelocity += this.yAcceleration * diff;
+
+        this.zRotation += this.zRotationVelocity * diff + this.zRotationAcceleration * diff;
+        this.zRotationVelocity += this.zRotationAcceleration * diff;
+    }
+
+    draw(): void {
+        // Empty by default, to be filled in by inherited classes
+    }
+
+    initialize(target: PositionedObject): void {
+        this.updatePositionResults(target);
+        target.listsBelongingTo = this.listsBelongingTo;
+        target.removeSelfFromListsBelongingTo = this.removeSelfFromListsBelongingTo;
+    }
+
+    updatePositionResults(target: PositionedObject): void {
+        target.x = this.x;
+        target.y = this.y;
+        target.xVelocity = this.xVelocity;
+        target.yVelocity = this.yVelocity;
+        target.xAcceleration = this.xAcceleration;
+        target.yAcceleration = this.yAcceleration;
+        target.zRotation = this.zRotation;
+        target.zRotationAcceleration = this.zRotationAcceleration;
+        target.zRotationVelocity = this.zRotationVelocity;
+    }
+
+    updateControlValues(source: PositionedObject): void {
+        this.x = source.x;
+        this.y = source.y;
+        this.xVelocity = source.xVelocity;
+        this.yVelocity = source.yVelocity;
+        this.xAcceleration = source.xAcceleration;
+        this.yAcceleration = source.yAcceleration;
+        this.zRotation = source.zRotation;
+        this.zRotationVelocity = source.zRotationVelocity;
+        this.zRotationAcceleration = source.zRotationAcceleration;
+    }
+
+    removeSelfFromListsBelongingTo(): void {
+        frb.attachableList.removeFromAll(this);
+    }
+}
+
 class Circle extends PositionedObject {
     radius: number;
     width: number;
@@ -400,13 +420,6 @@ class Circle extends PositionedObject {
 
         this.alpha = MathHelper.clamp(this.alpha, 0, 1);
     }
-}
-
-class TextureCoordinate {
-    left: number;
-    right: number;
-    top: number;
-    bottom: number;
 }
 
 class Sprite extends PositionedObject {

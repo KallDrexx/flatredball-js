@@ -112,6 +112,24 @@ var ResourcePool = (function () {
     };
     return ResourcePool;
 })();
+var TextureCoordinate = (function () {
+    function TextureCoordinate() { }
+    return TextureCoordinate;
+})();
+var Camera = (function () {
+    function Camera() {
+        this.x = 0;
+        this.y = 0;
+    }
+    Camera.prototype.start = function () {
+        frb.context.save();
+        frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
+    };
+    Camera.prototype.end = function () {
+        frb.context.restore();
+    };
+    return Camera;
+})();
 var TimeManager = (function () {
     function TimeManager() {
         this.start = new Date();
@@ -131,77 +149,72 @@ var TimeManager = (function () {
     };
     return TimeManager;
 })();
-var PositionedObject = (function () {
-    function PositionedObject() {
-        this.x = 0;
-        this.y = 0;
-        this.xVelocity = 0;
-        this.yVelocity = 0;
-        this.xTarget = 0;
-        this.yTarget = 0;
-        this.xAcceleration = 0;
-        this.yAcceleration = 0;
-        this.zRotation = 0;
-        this.zRotationAcceleration = 0;
-        this.zRotationVelocity = 0;
-        this.listsBelongingTo = [];
+var SpriteManager = (function () {
+    function SpriteManager() {
+        this.camera = new Camera();
+        this.images = {
+        };
+        this.sprites = [];
     }
-    PositionedObject.prototype.update = function () {
-        var diff = frb.timeManager.secondDifference;
-        this.x += this.xVelocity * diff + this.xAcceleration * diff;
-        this.y += this.yVelocity * diff + this.yAcceleration * diff;
-        this.xVelocity += this.xAcceleration * diff;
-        this.yVelocity += this.yAcceleration * diff;
-        this.zRotation += this.zRotationVelocity * diff + this.zRotationAcceleration * diff;
-        this.zRotationVelocity += this.zRotationAcceleration * diff;
+    SpriteManager.prototype.add = function (name) {
+        var path = name;
+        if(name.indexOf("http") < 0) {
+            path = "content/" + name;
+            if(path.indexOf(".") < 0) {
+                path += ".png";
+            }
+        }
+        var img;
+        if(name in this.images) {
+            img = this.images[name];
+        } else {
+            img = new Image();
+            img.src = path;
+            img.loadEvents = new Array();
+            img.onload = function () {
+                for(var i = 0; i < img.loadEvents.length; i++) {
+                    img.loadEvents[i]();
+                }
+            };
+            this.images[name] = img;
+        }
+        var sprite = new Sprite(name, img, 0, 0);
+        this.sprites.push(sprite);
+        return sprite;
     };
-    PositionedObject.prototype.draw = function () {
+    SpriteManager.prototype.addCircle = function (radius) {
+        var circle = new Circle(0, 0, radius);
+        this.sprites.push(circle);
+        return circle;
     };
-    PositionedObject.prototype.initialize = function (target) {
-        this.updatePositionResults(target);
-        target.listsBelongingTo = this.listsBelongingTo;
-        target.removeSelfFromListsBelongingTo = this.removeSelfFromListsBelongingTo;
+    SpriteManager.prototype.update = function () {
+        for(var i = 0; i < this.sprites.length; i++) {
+            var sprite = this.sprites[i];
+            sprite.update();
+        }
     };
-    PositionedObject.prototype.updatePositionResults = function (target) {
-        target.x = this.x;
-        target.y = this.y;
-        target.xVelocity = this.xVelocity;
-        target.yVelocity = this.yVelocity;
-        target.xAcceleration = this.xAcceleration;
-        target.yAcceleration = this.yAcceleration;
-        target.zRotation = this.zRotation;
-        target.zRotationAcceleration = this.zRotationAcceleration;
-        target.zRotationVelocity = this.zRotationVelocity;
+    SpriteManager.prototype.draw = function () {
+        this.camera.start();
+        for(var i = 0; i < this.sprites.length; i++) {
+            var sprite = this.sprites[i];
+            sprite.draw();
+        }
+        this.camera.end();
     };
-    PositionedObject.prototype.updateControlValues = function (source) {
-        this.x = source.x;
-        this.y = source.y;
-        this.xVelocity = source.xVelocity;
-        this.yVelocity = source.yVelocity;
-        this.xAcceleration = source.xAcceleration;
-        this.yAcceleration = source.yAcceleration;
-        this.zRotation = source.zRotation;
-        this.zRotationVelocity = source.zRotationVelocity;
-        this.zRotationAcceleration = source.zRotationAcceleration;
-    };
-    PositionedObject.prototype.removeSelfFromListsBelongingTo = function () {
-        frb.attachableList.removeFromAll(this);
-    };
-    return PositionedObject;
+    return SpriteManager;
 })();
-var Camera = (function () {
-    function Camera() {
-        this.x = 0;
-        this.y = 0;
+var InputManager = (function () {
+    function InputManager() {
+        this.mouse = new Mouse();
+        this.keyboard = new Keyboard();
     }
-    Camera.prototype.start = function () {
-        frb.context.save();
-        frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
+    InputManager.prototype.update = function () {
+        var left = frb.spriteManager.camera.x - (frb.graphics.width / 2);
+        var top = MathHelper.invert(frb.spriteManager.camera.y) - (frb.graphics.height / 2);
+        this.mouse.worldX = left + this.mouse.x;
+        this.mouse.worldY = MathHelper.invert(top + this.mouse.y);
     };
-    Camera.prototype.end = function () {
-        frb.context.restore();
-    };
-    return Camera;
+    return InputManager;
 })();
 var Mouse = (function () {
     function Mouse() {
@@ -327,72 +340,63 @@ var Keyboard = (function () {
     };
     return Keyboard;
 })();
-var SpriteManager = (function () {
-    function SpriteManager() {
-        this.camera = new Camera();
-        this.images = {
-        };
-        this.sprites = [];
+var PositionedObject = (function () {
+    function PositionedObject() {
+        this.x = 0;
+        this.y = 0;
+        this.xVelocity = 0;
+        this.yVelocity = 0;
+        this.xTarget = 0;
+        this.yTarget = 0;
+        this.xAcceleration = 0;
+        this.yAcceleration = 0;
+        this.zRotation = 0;
+        this.zRotationAcceleration = 0;
+        this.zRotationVelocity = 0;
+        this.listsBelongingTo = [];
     }
-    SpriteManager.prototype.add = function (name) {
-        var path = name;
-        if(name.indexOf("http") < 0) {
-            path = "content/" + name;
-            if(path.indexOf(".") < 0) {
-                path += ".png";
-            }
-        }
-        var img;
-        if(name in this.images) {
-            img = this.images[name];
-        } else {
-            img = new Image();
-            img.src = path;
-            img.loadEvents = new Array();
-            img.onload = function () {
-                for(var i = 0; i < img.loadEvents.length; i++) {
-                    img.loadEvents[i]();
-                }
-            };
-            this.images[name] = img;
-        }
-        var sprite = new Sprite(name, img, 0, 0);
-        this.sprites.push(sprite);
-        return sprite;
+    PositionedObject.prototype.update = function () {
+        var diff = frb.timeManager.secondDifference;
+        this.x += this.xVelocity * diff + this.xAcceleration * diff;
+        this.y += this.yVelocity * diff + this.yAcceleration * diff;
+        this.xVelocity += this.xAcceleration * diff;
+        this.yVelocity += this.yAcceleration * diff;
+        this.zRotation += this.zRotationVelocity * diff + this.zRotationAcceleration * diff;
+        this.zRotationVelocity += this.zRotationAcceleration * diff;
     };
-    SpriteManager.prototype.addCircle = function (radius) {
-        var circle = new Circle(0, 0, radius);
-        this.sprites.push(circle);
-        return circle;
+    PositionedObject.prototype.draw = function () {
     };
-    SpriteManager.prototype.update = function () {
-        for(var i = 0; i < this.sprites.length; i++) {
-            var sprite = this.sprites[i];
-            sprite.update();
-        }
+    PositionedObject.prototype.initialize = function (target) {
+        this.updatePositionResults(target);
+        target.listsBelongingTo = this.listsBelongingTo;
+        target.removeSelfFromListsBelongingTo = this.removeSelfFromListsBelongingTo;
     };
-    SpriteManager.prototype.draw = function () {
-        this.camera.start();
-        for(var i = 0; i < this.sprites.length; i++) {
-            var sprite = this.sprites[i];
-            sprite.draw();
-        }
-        this.camera.end();
+    PositionedObject.prototype.updatePositionResults = function (target) {
+        target.x = this.x;
+        target.y = this.y;
+        target.xVelocity = this.xVelocity;
+        target.yVelocity = this.yVelocity;
+        target.xAcceleration = this.xAcceleration;
+        target.yAcceleration = this.yAcceleration;
+        target.zRotation = this.zRotation;
+        target.zRotationAcceleration = this.zRotationAcceleration;
+        target.zRotationVelocity = this.zRotationVelocity;
     };
-    return SpriteManager;
-})();
-var InputManager = (function () {
-    function InputManager() {
-        this.mouse = new Mouse();
-        this.keyboard = new Keyboard();
-    }
-    InputManager.prototype.update = function () {
-        var left = frb.spriteManager.camera.x - (frb.graphics.width / 2);
-        var top = MathHelper.invert(frb.spriteManager.camera.y) - (frb.graphics.height / 2);
-        this.mouse.worldX = left + this.mouse.x;
-        this.mouse.worldY = MathHelper.invert(top + this.mouse.y);
+    PositionedObject.prototype.updateControlValues = function (source) {
+        this.x = source.x;
+        this.y = source.y;
+        this.xVelocity = source.xVelocity;
+        this.yVelocity = source.yVelocity;
+        this.xAcceleration = source.xAcceleration;
+        this.yAcceleration = source.yAcceleration;
+        this.zRotation = source.zRotation;
+        this.zRotationVelocity = source.zRotationVelocity;
+        this.zRotationAcceleration = source.zRotationAcceleration;
     };
-    return InputManager;
+    PositionedObject.prototype.removeSelfFromListsBelongingTo = function () {
+        frb.attachableList.removeFromAll(this);
+    };
+    return PositionedObject;
 })();
 var Circle = (function (_super) {
     __extends(Circle, _super);
@@ -433,10 +437,6 @@ var Circle = (function (_super) {
     };
     return Circle;
 })(PositionedObject);
-var TextureCoordinate = (function () {
-    function TextureCoordinate() { }
-    return TextureCoordinate;
-})();
 var Sprite = (function (_super) {
     __extends(Sprite, _super);
     function Sprite(name, img, x, y) {

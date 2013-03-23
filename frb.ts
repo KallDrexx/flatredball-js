@@ -9,11 +9,11 @@ class MathHelper {
     static piOver4: number = (Math.PI / 4.0);
     static twoPi: number = (Math.PI * 2.0);
 
-    static invert(value: number) {
+    static invert(value: number): number {
         return 0 - value;
     }
 
-    static clamp(value: number, min: number, max: number) {
+    static clamp(value: number, min: number, max: number): number {
         if (value < min)
             return min;
         
@@ -23,15 +23,15 @@ class MathHelper {
         return value;
     }
 
-    static lerp(value1: number, value2: number, amount: number) {
+    static lerp(value1: number, value2: number, amount: number): number {
         return value1 + (value2 - value1) * amount;
     }
 
-    static toDegrees(radians: number) {
+    static toDegrees(radians: number): number {
         return radians * 57.295779513082320876798154814105;
     }
 
-    static toRadians(degrees: number) {
+    static toRadians(degrees: number): number {
         return degrees * 0.017453292519943295769236907684886;
     }
 }
@@ -48,15 +48,15 @@ class AttachableList {
         this.length = 0;
     }
 
-    get(index: number) {
+    get(index: number): PositionedObject {
         return this.list[index];
     }
 
-    contains(value: PositionedObject) {
+    contains(value: PositionedObject): bool {
         return this.list.indexOf(value) >= 0;
     }
 
-    add(value: PositionedObject) {
+    add(value: PositionedObject): void {
         if (!this.contains(value)) {
             this.list.push(value);
             this.length = this.list.length;
@@ -66,11 +66,11 @@ class AttachableList {
         }
     }
 
-    push(value: PositionedObject) {
+    push(value: PositionedObject): void {
         this.add(value);
     }
 
-    pop() {
+    pop(): PositionedObject {
         if (this.length <= 0) throw "no more items to pop";
 
         var item = this.get(this.length - 1);
@@ -78,7 +78,7 @@ class AttachableList {
         return item;
     }
 
-    remove(value: PositionedObject) {
+    remove(value: PositionedObject): void {
         var index = this.list.indexOf(value);
 
         if (index >= 0) {
@@ -94,7 +94,7 @@ class AttachableList {
         }
     }
 
-    removeFromAll(value: PositionedObject) {
+    removeFromAll(value: PositionedObject): void {
         if (value.listsBelongingTo) {
             var numLists = value.listsBelongingTo.length;
             for (var i = 0; i < numLists; i++) {
@@ -113,7 +113,7 @@ class ResourcePool {
         this.available = new AttachableList();
     }
 
-    add(factory: any) {
+    add(factory: Function): PositionedObject {
         var newItem = null;
 
         // now check and see if we can use a recycled item
@@ -130,7 +130,7 @@ class ResourcePool {
         return newItem;
     }
 
-    return (item: any) {
+    return (item: any): void {
         this.active.remove(item);
         this.available.add(item);
     }
@@ -142,7 +142,7 @@ class TimeManager {
     secondDifference: number = 0;
     secondDifferenceFromStart: number = 0;
 
-    update() {
+    update(): void {
         var startMilli = this.start.getTime();
         var lastMilli = this.last.getTime();
         this.last = new Date();
@@ -168,7 +168,7 @@ class PositionedObject {
     zRotationVelocity: number = 0;
     listsBelongingTo: any[] = [];
 
-    update() {
+    update(): void {
         var diff = frb.timeManager.secondDifference;
 
         this.x += this.xVelocity * diff + this.xAcceleration * diff;
@@ -180,16 +180,16 @@ class PositionedObject {
         this.zRotationVelocity += this.zRotationAcceleration * diff;
     }
 
-    draw() {
+    draw(): void {
     }
 
-    initialize(target: PositionedObject) {
+    initialize(target: PositionedObject): void {
         this.updatePositionResults(target);
         target.listsBelongingTo = this.listsBelongingTo;
         target.removeSelfFromListsBelongingTo = this.removeSelfFromListsBelongingTo;
     }
 
-    updatePositionResults(target: PositionedObject) {
+    updatePositionResults(target: PositionedObject): void {
         target.x = this.x;
         target.y = this.y;
         target.xVelocity = this.xVelocity;
@@ -201,7 +201,7 @@ class PositionedObject {
         target.zRotationVelocity = this.zRotationVelocity;
     }
 
-    updateControlValues(source: PositionedObject) {
+    updateControlValues(source: PositionedObject): void {
         this.x = source.x;
         this.y = source.y;
         this.xVelocity = source.xVelocity;
@@ -213,7 +213,7 @@ class PositionedObject {
         this.zRotationAcceleration = source.zRotationAcceleration;
     }
 
-    removeSelfFromListsBelongingTo() {
+    removeSelfFromListsBelongingTo(): void {
         frb.attachableList.removeFromAll(this);
     }
 }
@@ -227,7 +227,7 @@ class Camera {
         frb.context.translate((0 - this.x) + frb.graphics.width / 2, this.y + frb.graphics.height / 2);
     }
 
-    end() {
+    end(): void {
         frb.context.restore();
     }
 }
@@ -261,7 +261,7 @@ class Keyboard {
         219: "[", 220: "\\", 221: "]", 222: "'"
     };
 
-    keyDown(key: string) {
+    keyDown(key: string): bool {
         return this.pressed[frb.keys[key]] === true;
     }
 }
@@ -271,7 +271,7 @@ class SpriteManager {
     images: { [name: string]: HTMLImageElement; } = {};
     sprites: PositionedObject[] = [];
 
-    add(name: string) {
+    add(name: string): Sprite {
         var path = name;
 
         // handle the case where we want a static URL
@@ -305,21 +305,21 @@ class SpriteManager {
         return sprite;
     }
 
-    addCircle(radius: number) {
+    addCircle(radius: number): Circle {
         var circle = new Circle(0, 0, radius);
         this.sprites.push(circle);
 
         return circle;
     }
 
-    update() {
+    update(): void {
         for (var i = 0; i < this.sprites.length; i++) {
             var sprite = this.sprites[i];
             sprite.update();
         }
     }
 
-    draw() {
+    draw(): void {
         this.camera.start();
         for (var i = 0; i < this.sprites.length; i++) {
             var sprite = this.sprites[i];
@@ -333,7 +333,7 @@ class InputManager {
     mouse: Mouse = new Mouse();
     keyboard: Keyboard = new Keyboard();
 
-    update() {
+    update(): void {
         // update the mouse's world coordinates
         var left = frb.spriteManager.camera.x - (frb.graphics.width / 2);
         var top = MathHelper.invert(frb.spriteManager.camera.y) - (frb.graphics.height / 2);
@@ -370,7 +370,7 @@ class Circle extends PositionedObject {
         this.borderWidth = 1;
     }
 
-    draw() {
+    draw(): void {
         frb.context.save();
         frb.context.translate(this.xTarget, this.yTarget);
 
@@ -390,7 +390,7 @@ class Circle extends PositionedObject {
         frb.context.restore();
     }
 
-    update() {
+    update(): void {
         super.update();
         this.updateControlValues(this);
         this.updatePositionResults(this);
@@ -438,7 +438,7 @@ class Sprite extends PositionedObject {
         //});
     }
 
-    draw() {
+    draw(): void {
         frb.context.save();
         frb.context.translate(this.xTarget, this.yTarget);
 
@@ -462,7 +462,7 @@ class Sprite extends PositionedObject {
         frb.context.restore();
     }
 
-    update() {
+    update(): void {
         super.update();
         this.updateControlValues(this);
         this.updatePositionResults(this);
@@ -473,7 +473,7 @@ class Sprite extends PositionedObject {
         this.alpha = MathHelper.clamp(this.alpha, 0, 1);
     }
 
-    addTextureCoordinate(left: number, right: number, top: number, bottom: number) {
+    addTextureCoordinate(left: number, right: number, top: number, bottom: number): void {
         this.textureCoordinate = new TextureCoordinate();
         this.textureCoordinate.left = left;
         this.textureCoordinate.right = right;
@@ -528,7 +528,7 @@ class frb {
         "[": 219, "\\": 220, "]": 221, "'": 222
     };
 
-    static start(options: FrbOptions) {
+    static start(options: FrbOptions): void {
         function coreUpdate() {
             frb.timeManager.update();
             frb.inputManager.update();

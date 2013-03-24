@@ -57,7 +57,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <!--<Compile Include="Properties\AssemblyInfo.cs" />-->
   </ItemGroup>
   <ItemGroup>
     <Content Include="definitions\jquery.d.ts" />
@@ -93,6 +93,12 @@
       <DependentUpon>TextureCoordinate.ts</DependentUpon>
     </Content>
     <Content Include="frb\Core\TextureCoordinate.ts" />
+    <Content Include="frb\frb.js">
+      <DependentUpon>frb.js.bundle</DependentUpon>
+    </Content>
+    <Content Include="frb\frb.min.js">
+      <DependentUpon>frb.js.bundle</DependentUpon>
+    </Content>
     <Content Include="frb\Input\Keyboard.js">
       <DependentUpon>Keyboard.ts</DependentUpon>
     </Content>
@@ -130,10 +136,17 @@
     </Content>
     <Content Include="frb\references.ts" />
     <Content Include="index.html" />
+    <Content Include="jquery-1.7.1.min.js" />
     <Content Include="main.js">
       <DependentUpon>main.ts</DependentUpon>
     </Content>
     <Content Include="main.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="frb\frb.js.bundle" />
+    <Content Include="frb\frb.min.js.map">
+      <DependentUpon>frb.js.bundle</DependentUpon>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

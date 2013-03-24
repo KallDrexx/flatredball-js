@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bundle minify="true" runOnBuild="true">
+  <!--The order of the <file> elements determines the order of them when bundled.-->
+	<file>/frb/Core/TextureCoordinate.js</file>
+	<file>/frb/Core/ResourcePool.js</file>
+	<file>/frb/Core/MathHelper.js</file>
+	<file>/frb/Core/Graphics.js</file>
+	<file>/frb/Core/Camera.js</file>
+  <file>/frb/Core/AttachaleList.js</file>
+	<file>/frb/Managers/InputManager.js</file>
+	<file>/frb/Managers/SpriteManager.js</file>
+	<file>/frb/Managers/TimeManager.js</file>
+	<file>/frb/Input/Keyboard.js</file>
+	<file>/frb/Input/Mouse.js</file>
+  
+  <file>/frb/Objects/PositionedObject.js</file>
+	<file>/frb/Objects/Circle.js</file>
+	<file>/frb/Objects/Sprite.js</file>
+  
+  <!-- Must be last!! -->
+  <file>/frb/Core/Start.js</file>
+  <file>/frb/Core/Globals.js</file>
+</bundle>

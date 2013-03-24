@@ -14,4 +14,4 @@
 /// <reference path="Core/Graphics.ts" />
 /// <reference path="Core/Globals.ts" />
 /// <reference path="Core/Camera.ts" />
-/// <reference path="Core/AttachaleList.ts" />
+/// <reference path="Core/AttachableList.ts" />

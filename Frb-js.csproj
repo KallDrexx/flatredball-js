@@ -61,10 +61,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="definitions\jquery.d.ts" />
-    <Content Include="frb\Core\AttachaleList.js">
-      <DependentUpon>AttachaleList.ts</DependentUpon>
+    <Content Include="frb\Core\AttachableList.js">
+      <DependentUpon>AttachableList.ts</DependentUpon>
     </Content>
-    <Content Include="frb\Core\AttachaleList.ts" />
+    <Content Include="frb\Core\AttachaleList.js">
+      <DependentUpon>AttachableList.ts</DependentUpon>
+    </Content>
+    <Content Include="frb\Core\AttachableList.ts" />
     <Content Include="frb\Core\Camera.js">
       <DependentUpon>Camera.ts</DependentUpon>
     </Content>

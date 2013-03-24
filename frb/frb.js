@@ -107,7 +107,7 @@ var frb;
     frb.Camera = Camera;    
 })(frb || (frb = {}));
 
-///#source 1 1 /frb/Core/AttachaleList.js
+///#source 1 1 /frb/Core/AttachableList.js
 var frb;
 (function (frb) {
     var AttachableList = (function () {

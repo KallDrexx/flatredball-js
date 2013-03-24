@@ -1,6 +1,4 @@
-﻿/// <reference path="../Core/Globals.ts" />
-/// <reference path="../Managers/TimeManager.ts" />
-/// <reference path="../Core/AttachaleList.ts" />
+﻿/// <reference path="../references.ts" />
 
 module frb {
     export class PositionedObject {

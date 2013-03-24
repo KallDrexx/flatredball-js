@@ -1,5 +1,0 @@
-C:\Users\Matthew\Documents\Projects\flatredball-js\obj\Debug\Frb-js.csprojResolveAssemblyReference.cache
-C:\Users\Matthew\Documents\Projects\flatredball-js\bin\Frb-js.dll
-C:\Users\Matthew\Documents\Projects\flatredball-js\bin\Frb-js.pdb
-C:\Users\Matthew\Documents\Projects\flatredball-js\obj\Debug\Frb-js.dll
-C:\Users\Matthew\Documents\Projects\flatredball-js\obj\Debug\Frb-js.pdb

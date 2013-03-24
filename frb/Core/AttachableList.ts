@@ -1,6 +1,5 @@
 ﻿/// <reference path="../references.ts" />
 
-
 module frb {
     export class AttachableList {
         list: PositionedObject[];

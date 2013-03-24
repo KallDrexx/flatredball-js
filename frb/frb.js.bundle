@@ -6,7 +6,7 @@
 	<file>/frb/Core/MathHelper.js</file>
 	<file>/frb/Core/Graphics.js</file>
 	<file>/frb/Core/Camera.js</file>
-  <file>/frb/Core/AttachaleList.js</file>
+  <file>/frb/Core/AttachableList.js</file>
 	<file>/frb/Managers/InputManager.js</file>
 	<file>/frb/Managers/SpriteManager.js</file>
 	<file>/frb/Managers/TimeManager.js</file>
